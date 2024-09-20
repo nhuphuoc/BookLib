@@ -1,8 +1,9 @@
 package org.example.booklibrary.service.Impl;
 
-import org.example.booklibrary.controller.TestController;
+import org.example.booklibrary.constants.ErrorCode;
 import org.example.booklibrary.dto.response.BookDto;
 import org.example.booklibrary.entity.Book;
+import org.example.booklibrary.exception.BookNotFoundException;
 import org.example.booklibrary.mapper.BookDtoMapper;
 import org.example.booklibrary.repository.BookRepository;
 import org.example.booklibrary.service.BookService;
@@ -15,9 +16,9 @@ import org.slf4j.LoggerFactory;
 
 @Service
 public class BookServiceImpl implements BookService {
+  private static final Logger LOGGER = LoggerFactory.getLogger(BookServiceImpl.class);
   private BookRepository bookRepository;
   private BookDtoMapper bookDtoMapper;
-  private static final Logger LOGGER = LoggerFactory.getLogger(BookServiceImpl.class);
 
   @Autowired
   public BookServiceImpl(BookRepository bookRepository, BookDtoMapper bookDtoMapper) {
@@ -25,16 +26,21 @@ public class BookServiceImpl implements BookService {
     this.bookDtoMapper = bookDtoMapper;
   }
 
-  @Override
-  public List<BookDto> getAllBooks() {
-    LOGGER.info("Get all books");
+    @Override
+  public List<BookDto> getAllBooks(String requestId) {
+    LOGGER.info("[Request id {}]: Get all books, total: {}", requestId, bookRepository.count());
     return bookDtoMapper.toListDto(bookRepository.findAll());
   }
 
   @Override
-  public Optional<Book> getBookById(Long id) {
-    LOGGER.info("Get book by id {}", id);
-    return bookRepository.findById(id);
+  public Optional<Book> getBookById(Long id, String requestId) {
+    if (!bookRepository.existsById(id)) {
+        LOGGER.info("[Request id {}]: Book id {} not found", requestId, id);
+        throw new BookNotFoundException(requestId, ErrorCode.BOOK_NOT_FOUND, "Book with ID " + id + " not found");
+    } else {
+        LOGGER.info("[Request id {}]: Book id {} found", requestId, id);
+        return bookRepository.findById(id);
+    }
   }
 
   @Override
