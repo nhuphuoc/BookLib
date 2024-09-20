@@ -5,7 +5,6 @@ import org.example.booklibrary.entity.Book;
 import org.example.booklibrary.service.Impl.BookServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,15 +17,14 @@ public class BookController {
 
   @Autowired private BookServiceImpl bookServiceImpl;
 
-  @GetMapping
-  public ResponseEntity<List<BookDto>> getAllBooks() {
-    return new ResponseEntity<>(bookServiceImpl.getAllBooks(), HttpStatus.OK);
+  @GetMapping("/{requestId}")
+  public ResponseEntity<List<BookDto>> getAllBooks(@PathVariable String requestId) {
+    return new ResponseEntity<>(bookServiceImpl.getAllBooks(requestId), HttpStatus.OK);
   }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<Book> getBookById(@PathVariable Long id) {
-    Optional<Book> book = bookServiceImpl.getBookById(id);
-    return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+  @GetMapping("/{id}/{requestId}")
+  public ResponseEntity<Optional<Book>> getBookById(@PathVariable Long id, @PathVariable String requestId) {
+    return new ResponseEntity<>(bookServiceImpl.getBookById(id,requestId), HttpStatus.OK);
   }
 
   @PostMapping

@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
-    List<BookDto> getAllBooks();
 
-    Optional<Book> getBookById(Long id);
+    List<BookDto> getAllBooks(String requestId);
+
+
+    Optional<Book> getBookById(Long id, String requestId);
 
     Book saveBook(Book book);
 
