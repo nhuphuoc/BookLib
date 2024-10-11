@@ -8,6 +8,7 @@ import org.example.booklibrary.mapper.BookDtoMapper;
 import org.example.booklibrary.repository.BookRepository;
 import org.example.booklibrary.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,9 @@ public class BookServiceImpl implements BookService {
   private static final Logger LOGGER = LoggerFactory.getLogger(BookServiceImpl.class);
   private BookRepository bookRepository;
   private BookDtoMapper bookDtoMapper;
+
+  @Autowired
+  private RedisTemplate<String, Object> redisTemplate;
 
   @Autowired
   public BookServiceImpl(BookRepository bookRepository, BookDtoMapper bookDtoMapper) {

@@ -4,6 +4,7 @@ import org.example.booklibrary.dto.response.BookDto;
 import org.example.booklibrary.entity.Book;
 import org.example.booklibrary.service.Impl.BookServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class BookController {
   @Autowired private BookServiceImpl bookServiceImpl;
 
   @GetMapping("/{requestId}")
+  @Cacheable("myCache")
   public ResponseEntity<List<BookDto>> getAllBooks(@PathVariable String requestId) {
     return new ResponseEntity<>(bookServiceImpl.getAllBooks(requestId), HttpStatus.OK);
   }
