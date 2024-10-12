@@ -8,8 +8,9 @@ import org.example.booklibrary.mapper.BookDtoMapper;
 import org.example.booklibrary.repository.BookRepository;
 import org.example.booklibrary.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -21,8 +22,10 @@ public class BookServiceImpl implements BookService {
   private BookRepository bookRepository;
   private BookDtoMapper bookDtoMapper;
 
-  @Autowired
-  private RedisTemplate<String, Object> redisTemplate;
+//  @Autowired
+//  private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    CacheServiceImpl cacheServiceImpl;
 
   @Autowired
   public BookServiceImpl(BookRepository bookRepository, BookDtoMapper bookDtoMapper) {
@@ -30,10 +33,30 @@ public class BookServiceImpl implements BookService {
     this.bookDtoMapper = bookDtoMapper;
   }
 
-    @Override
+  @Override
   public List<BookDto> getAllBooks(String requestId) {
     LOGGER.info("[Request id {}]: Get all books, total: {}", requestId, bookRepository.count());
     return bookDtoMapper.toListDto(bookRepository.findAll());
+  }
+
+  public String getAllBooksWithCache(String requestId) {
+    String cacheKey = "books_list";
+    Duration cacheTime = Duration.ofMinutes(10); // cache 10 min
+      String cacheBookString = cacheServiceImpl.getByKey(cacheKey);
+
+    if (cacheBookString != null) {
+			LOGGER.info("[Request id {}]: Get all books from cache", requestId);
+      return cacheBookString;
+    }
+    List<Book> books = bookRepository.findAll();
+    LOGGER.info("[Request id {}]: Get all books, total: {}", requestId, bookRepository.count());
+    cacheServiceImpl.writeCache(cacheKey, books);
+    LOGGER.info(
+        "[Request id {}]: Saved to cache with cacheKey: {} - in: {} minute",
+        requestId,
+        cacheKey,
+        cacheTime);
+    return cacheServiceImpl.getByKey(cacheKey);
   }
 
   @Override

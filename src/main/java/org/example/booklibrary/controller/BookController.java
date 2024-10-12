@@ -20,9 +20,13 @@ public class BookController {
   @Autowired private BookServiceImpl bookServiceImpl;
 
   @GetMapping("/{requestId}")
-  @Cacheable("myCache")
   public ResponseEntity<List<BookDto>> getAllBooks(@PathVariable String requestId) {
     return new ResponseEntity<>(bookServiceImpl.getAllBooks(requestId), HttpStatus.OK);
+  }
+
+  @GetMapping("/cache/{requestId}")
+  public ResponseEntity<String> getAllBooksByCache(@PathVariable String requestId) {
+    return new ResponseEntity<>(bookServiceImpl.getAllBooksWithCache(requestId), HttpStatus.OK);
   }
 
   @GetMapping("/{id}/{requestId}")
