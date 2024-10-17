@@ -1,6 +1,6 @@
 package org.example.booklibrary.service.Impl;
 
-import jakarta.validation.constraints.Email;
+import org.example.booklibrary.service.KafkaProducerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,7 +8,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class KafkaProducerServiceImpl {
+public class KafkaProducerServiceImpl implements KafkaProducerService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducerServiceImpl.class);
 
 	@Value("${booklib.kafka.topic}")
@@ -26,8 +26,8 @@ public class KafkaProducerServiceImpl {
 		kafkaTemplate.send(DEFAULT_TOPIC, message);
 		LOGGER.info("[Request id {}]: Sent message to kafka: {}", requestId, message);
 	}
-
-	public void sendMessageToEmailNoti( String email, String requestId) {
+	@Override
+	public void sendMessageToEmailNoti(String email, String requestId) {
 		kafkaTemplate.send(NOTI_TOPIC, email);
 		LOGGER.info("[Request id {}]: Sent message to kafka: {}", requestId, email);
 	}
