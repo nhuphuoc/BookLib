@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.booklibrary.entity.Author;
 
 import java.util.Date;
@@ -13,6 +15,8 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class BookDto {
 
   private String title;

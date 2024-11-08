@@ -22,15 +22,13 @@ public class BookServiceImpl implements BookService {
   private BookRepository bookRepository;
   private BookDtoMapper bookDtoMapper;
 
-//  @Autowired
-//  private RedisTemplate<String, Object> redisTemplate;
-    @Autowired
-    CacheServiceImpl cacheServiceImpl;
+  private CacheServiceImpl cacheServiceImpl;
 
   @Autowired
-  public BookServiceImpl(BookRepository bookRepository, BookDtoMapper bookDtoMapper) {
+  public BookServiceImpl(BookRepository bookRepository, BookDtoMapper bookDtoMapper, CacheServiceImpl cacheServiceImpl) {
     this.bookRepository = bookRepository;
     this.bookDtoMapper = bookDtoMapper;
+    this.cacheServiceImpl = cacheServiceImpl;
   }
 
   @Override
@@ -43,7 +41,6 @@ public class BookServiceImpl implements BookService {
     String cacheKey = "books_list";
     Duration cacheTime = Duration.ofMinutes(10); // cache 10 min
       String cacheBookString = cacheServiceImpl.getByKey(cacheKey);
-
     if (cacheBookString != null) {
 			LOGGER.info("[Request id {}]: Get all books from cache", requestId);
       return cacheBookString;
