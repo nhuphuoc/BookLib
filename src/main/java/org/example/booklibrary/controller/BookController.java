@@ -19,6 +19,11 @@ public class BookController {
 
   @Autowired private BookServiceImpl bookServiceImpl;
 
+  /**
+   * Return all books saved in the database
+   * @param requestId - id of the request
+   * @return list bookDto
+   */
   @GetMapping("/{requestId}")
   public ResponseEntity<List<BookDto>> getAllBooks(@PathVariable String requestId) {
     return new ResponseEntity<>(bookServiceImpl.getAllBooks(requestId), HttpStatus.OK);
