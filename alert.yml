@@ -1,0 +1,10 @@
+groups:
+  - name: example-alert
+    rules:
+      - alert: HighMemoryUsage
+        expr: jvm_memory_used_bytes > 500000000 # Điều kiện kích hoạt alert
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "JVM memory usage is high"

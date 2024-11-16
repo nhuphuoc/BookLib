@@ -1,0 +1,25 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9095
+
+positions:
+  filename: /tmp/loki-positions.yaml
+
+distributors:
+  ring:
+    kvstore:
+      store: inmemory
+
+ingesters:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /tmp/loki/index
+    cache_location: /tmp/loki/cache
+    resync_interval: 10s

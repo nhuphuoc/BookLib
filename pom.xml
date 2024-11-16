@@ -129,6 +129,11 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.loki4j</groupId>
+            <artifactId>loki-logback-appender</artifactId>
+            <version>1.2.0</version> <!-- Hoặc phiên bản mới nhất -->
+        </dependency>
     </dependencies>
 
     <build>
