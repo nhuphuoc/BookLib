@@ -1,7 +1,11 @@
 package org.example.booklibrary.service.practice;
 
+import org.example.booklibrary.dto.request.AlertDTO;
+import org.example.booklibrary.dto.request.AlertDetailsDTO;
+import org.example.booklibrary.dto.request.AlertGroupDTO;
 import org.example.booklibrary.entity.practice.Alert;
 import org.example.booklibrary.entity.practice.AlertDetails;
+import org.example.booklibrary.entity.practice.AlertGroup;
 import org.example.booklibrary.repository.pratice.AlertDetailsRepository;
 import org.example.booklibrary.repository.pratice.AlertGroupRepository;
 import org.example.booklibrary.repository.pratice.AlertRepository;
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,6 +30,11 @@ public class AlertService {
 
 	@Autowired
 	private AlertGroupRepository alertGroupRepository;
+	@Autowired
+	private AlertGroupService alertGroupService;
+
+	@Autowired
+	private AlertDetailsService alertDetailsService;
 
 	public List<Alert> getAllAlerts() {
 		return alertRepository.findAll();
@@ -46,28 +56,23 @@ public class AlertService {
 	}
 
 	@Transactional
-	public Optional<Alert> updateAlert(String alertId, Alert alertDetails) {
+	public Optional<Alert> updateAlert(String alertId, AlertDTO alertDTO) {
 		return alertRepository.findById(alertId).map(alert -> {
-			alert.setSource(alertDetails.getSource());
+			// 1. Cập nhật các trường cơ bản của Alert
+			alert.setSource(alertDTO.getSource());
 
-			// Cập nhật chi tiết của AlertDetails
-			AlertDetails currentAlertDetails = alert.getAlertDetails();
-			AlertDetails updatedAlertDetails = alertDetails.getAlertDetails();
+			// 2. Cập nhật AlertDetails
+			alertDetailsService.updateAlertDetails(alert.getAlertDetails(), alertDTO.getAlertDetails());
 
-			if (currentAlertDetails != null && updatedAlertDetails != null) {
-				currentAlertDetails.setPayload(updatedAlertDetails.getPayload());
-				alert.setAlertDetails(alertDetailsRepository.save(currentAlertDetails));
-			}
+			// 3. Cập nhật danh sách AlertGroup
+			List<AlertGroup> updatedGroups = alertGroupService.updateAlertGroups(alert, alertDTO.getAlertGroups());
+			alert.setAlertGroups(updatedGroups);
 
-			// Cập nhật danh sách AlertGroup
-			alert.setAlertGroups(alertDetails.getAlertGroups().stream()
-							.peek(group -> group.setAlert(alert))
-							.map(alertGroupRepository::save)
-							.collect(Collectors.toList()));
-
+			// 4. Lưu Alert đã cập nhật
 			return alertRepository.save(alert);
 		});
 	}
+
 
 }
 

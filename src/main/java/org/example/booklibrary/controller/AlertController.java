@@ -1,4 +1,5 @@
 package org.example.booklibrary.controller;
+import org.example.booklibrary.dto.request.AlertDTO;
 import org.example.booklibrary.entity.practice.Alert;
 import org.example.booklibrary.service.practice.AlertService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class AlertController {
 	}
 
 	@PutMapping("/{alertId}")
-	public ResponseEntity<Alert> updateAlert(@PathVariable String alertId, @RequestBody Alert alertDetails) {
+	public ResponseEntity<Alert> updateAlert(@PathVariable String alertId, @RequestBody AlertDTO alertDetails) {
 		return alertService.updateAlert(alertId, alertDetails)
 						.map(ResponseEntity::ok)
 						.orElseGet(() -> ResponseEntity.notFound().build());
